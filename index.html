@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Récitations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F6;
+    --surface:#FFFFFF;
+    --fg:#14130F;
+    --fg-muted:#706C61;
+    --fg-faint:#A6A196;
+    --line: rgba(20,19,15,0.10);
+    --line-strong: rgba(20,19,15,0.22);
+    --accent:#A9812E;
+    --accent-soft: rgba(169,129,46,0.14);
+    --radius: 2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--fg);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  ::selection{background:var(--accent-soft);}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+
+  /* NAV */
+  header.nav{
+    border-bottom:1px solid var(--line);
+    padding:22px 0;
+  }
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;}
+  .brand{
+    font-family:'Amiri',serif;
+    font-size:20px;
+    letter-spacing:0.02em;
+  }
+  .add-btn{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:var(--fg);
+    background:transparent;
+    border:1px solid var(--line-strong);
+    padding:9px 16px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .add-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* HERO */
+  .hero{
+    padding:72px 0 40px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  .hero .bismillah{
+    font-family:'Amiri',serif;
+    font-size:44px;
+    direction:rtl;
+    line-height:1.4;
+    margin:0 0 18px;
+    color:var(--fg);
+  }
+  .hero h1{
+    font-family:'Amiri',serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:20px;
+    margin:0 0 22px;
+    color:var(--fg-muted);
+  }
+  .hero .stats{
+    display:flex;
+    justify-content:center;
+    gap:36px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .hero .stats div{text-align:center;}
+  .hero .stats .num{font-size:22px;color:var(--fg);}
+  .hero .stats .lbl{font-size:11px;color:var(--fg-faint);letter-spacing:0.06em;text-transform:uppercase;margin-top:4px;}
+
+  /* CONTROLS — liquid glass */
+  .controls-stage{
+    position:relative;
+    padding:30px 0 36px;
+    isolation:isolate;
+  }
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(38px);
+    opacity:0.55;
+    z-index:-1;
+    animation:drift 14s ease-in-out infinite;
+  }
+  .blob.b1{
+    width:200px;height:200px;
+    background:radial-gradient(circle at 35% 35%, #C9A24B, transparent 68%);
+    top:-50px;left:-10px;
+  }
+  .blob.b2{
+    width:170px;height:170px;
+    background:radial-gradient(circle at 65% 65%, #8C97A6, transparent 68%);
+    top:-10px;right:20px;
+    animation-delay:-6s;
+  }
+  @keyframes drift{
+    0%,100%{ transform:translate(0,0); }
+    50%{ transform:translate(14px,10px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .blob{ animation:none; }
+  }
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .tabs{
+    display:flex;
+    gap:2px;
+    padding:4px;
+    background:rgba(255,255,255,0.35);
+    backdrop-filter:blur(16px) saturate(180%);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);
+    border:1px solid rgba(255,255,255,0.6);
+    border-radius:14px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      0 4px 16px rgba(20,19,15,0.06);
+    position:relative;
+  }
+  .tab{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--fg-muted);
+    background:transparent;
+    border:none;
+    padding:8px 14px;
+    cursor:pointer;
+    border-radius:10px;
+    transition:background .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+  .tab.active{
+    color:var(--fg);
+    background:rgba(255,255,255,0.8);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      0 3px 10px rgba(20,19,15,0.10);
+  }
+  .search-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .search-wrap svg{
+    position:absolute;
+    left:13px;
+    width:14px;height:14px;
+    stroke:var(--fg-faint);
+    fill:none;
+    stroke-width:1.6;
+    pointer-events:none;
+  }
+  .search{
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    border:1px solid rgba(255,255,255,0.6);
+    background:rgba(255,255,255,0.32);
+    backdrop-filter:blur(16px) saturate(180%);
+    -webkit-backdrop-filter:blur(16px) saturate(180%);
+    padding:10px 14px 10px 34px;
+    border-radius:14px;
+    color:var(--fg);
+    min-width:190px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.8),
+      0 4px 16px rgba(20,19,15,0.06);
+    transition:background .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .search::placeholder{color:var(--fg-faint);}
+  .search:focus{
+    outline:none;
+    background:rgba(255,255,255,0.55);
+    border-color:rgba(169,129,46,0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.9),
+      0 0 0 4px rgba(169,129,46,0.12),
+      0 6px 20px rgba(20,19,15,0.08);
+  }
+
+  /* LIST */
+  .list{border-top:1px solid var(--line);}
+  .row{
+    position:relative;
+    display:grid;
+    grid-template-columns:44px 1fr auto auto;
+    align-items:center;
+    gap:16px;
+    padding:16px 4px;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .row .n{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--fg-faint);
+  }
+  .row .names{min-width:0;}
+  .row .names .fr{
+    font-size:14px;
+    font-weight:500;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .row .names .ar{
+    font-family:'Amiri',serif;
+    font-size:15px;
+    color:var(--fg-muted);
+    direction:rtl;
+    margin-top:2px;
+  }
+  .row .note{
+    font-size:12px;
+    color:var(--fg-faint);
+    margin-top:3px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:280px;
+  }
+  .row .date{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--fg-faint);
+    white-space:nowrap;
+  }
+  .play-btn{
+    width:34px;height:34px;
+    border-radius:50%;
+    border:1px solid var(--line-strong);
+    background:var(--surface);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .play-btn:hover{border-color:var(--accent);}
+  .play-btn.loading{opacity:0.5;cursor:wait;}
+  .play-btn.playing{background:var(--accent);border-color:var(--accent);}
+  .play-btn svg{width:12px;height:12px;fill:var(--fg);}
+  .play-btn.playing svg{fill:#fff;}
+  .row .progress{
+    position:absolute;
+    left:0;bottom:-1px;
+    height:2px;
+    width:0%;
+    background:var(--accent);
+    transition:width .1s linear;
+  }
+  .row .del{
+    position:absolute;
+    right:-2px;top:6px;
+    font-size:11px;
+    color:var(--fg-faint);
+    background:none;border:none;cursor:pointer;
+    opacity:0;
+    transition:opacity .15s ease;
+  }
+  .row:hover .del{opacity:1;}
+  .row .del:hover{color:#B23A2E;}
+
+  .empty{
+    text-align:center;
+    padding:64px 12px;
+    color:var(--fg-muted);
+  }
+  .empty .ar{font-family:'Amiri',serif;font-size:26px;margin-bottom:10px;color:var(--fg-faint);}
+  .empty p{font-size:14px;margin:0 0 18px;}
+
+  footer{
+    text-align:center;
+    padding:40px 0 60px;
+    font-size:11px;
+    color:var(--fg-faint);
+    letter-spacing:0.04em;
+  }
+  .editor-link{
+    background:none;
+    border:none;
+    color:var(--fg-faint);
+    font-size:11px;
+    letter-spacing:0.04em;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .editor-link:hover{color:var(--accent);}
+  .editor-link.on{color:var(--accent);}
+
+  /* MODAL */
+  .overlay{
+    position:fixed;inset:0;
+    background:rgba(20,19,15,0.4);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:60px 20px;
+    z-index:50;
+    overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .modal{
+    background:var(--surface);
+    width:100%;max-width:440px;
+    border-radius:var(--radius);
+    padding:28px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.18);
+  }
+  .modal h2{
+    font-family:'Amiri',serif;
+    font-weight:400;
+    font-size:20px;
+    margin:0 0 20px;
+  }
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--fg-muted);
+    margin-bottom:6px;
+  }
+  .field input, .field textarea{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:9px 11px;
+    border:1px solid var(--line-strong);
+    border-radius:var(--radius);
+    background:var(--bg);
+    color:var(--fg);
+  }
+  .source-tabs{display:flex;gap:6px;margin-bottom:10px;}
+  .source-tab{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    padding:8px 10px;
+    border:1px solid var(--line-strong);
+    background:var(--bg);
+    color:var(--fg-muted);
+    border-radius:var(--radius);
+    cursor:pointer;
+  }
+  .source-tab.active{background:var(--fg);color:#fff;border-color:var(--fg);}
+  .file-drop{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    border:1px dashed var(--line-strong);
+    border-radius:var(--radius);
+    padding:22px 14px;
+    background:var(--bg);
+    cursor:pointer;
+    font-size:13px;
+    color:var(--fg-muted);
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .file-drop:hover{border-color:var(--accent);color:var(--fg);}
+  .file-drop.chosen{border-style:solid;border-color:var(--accent);color:var(--fg);}
+  .file-drop input{display:none;}
+  .upload-progress{
+    height:6px;
+    background:var(--line);
+    border-radius:3px;
+    overflow:hidden;
+    margin-top:10px;
+  }
+  .upload-progress-bar{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    transition:width .15s ease;
+  }
+  .field input:focus, .field textarea:focus{outline:none;border-color:var(--accent);}
+  .field .hint{font-size:11px;color:var(--fg-faint);margin-top:5px;line-height:1.5;}
+  .modal-actions{display:flex;gap:10px;margin-top:22px;}
+  .btn{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:11px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    border:1px solid var(--line-strong);
+    background:transparent;
+    color:var(--fg);
+  }
+  .btn.primary{background:var(--fg);border-color:var(--fg);color:#fff;}
+  .btn.primary:hover{background:var(--accent);border-color:var(--accent);}
+  .btn.ghost:hover{border-color:var(--fg);}
+  .err{color:#B23A2E;font-size:12px;margin-top:10px;display:none;}
+
+  @media (max-width:520px){
+    .row{grid-template-columns:32px 1fr auto;}
+    .row .date{display:none;}
+    .hero .bismillah{font-size:34px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand">Récitations</div>
+    <button class="add-btn" id="openAdd" style="display:none;">+ Ajouter</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+    <h1>Mes récitations du Saint Coran</h1>
+    <div class="stats">
+      <div><div class="num" id="statCount">0</div><div class="lbl">Sourates</div></div>
+      <div><div class="num" id="statLast">—</div><div class="lbl">Dernier ajout</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="controls-stage">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="controls">
+      <div class="tabs">
+        <button class="tab active" data-sort="surah">Par sourate</button>
+        <button class="tab" data-sort="recent">Récentes</button>
+      </div>
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input class="search" id="search" placeholder="Rechercher une sourate…">
+      </div>
+    </div>
+  </div>
+
+  <div class="list" id="list"></div>
+  <div class="empty" id="emptyState" style="display:none;">
+    <div class="ar">لَمْ يُضَفْ شَيْءٌ بَعْدُ</div>
+    <p>Aucune récitation pour l'instant.</p>
+    <button class="add-btn" id="openAddEmpty" style="display:none;">+ Ajouter la première</button>
+  </div>
+</section>
+
+<footer>RÉCITATIONS · SITE PERSONNEL · <button id="editorToggle" class="editor-link">Mode éditeur</button> <span id="settingsLinkWrap" style="display:none;">· <button id="openSettings" class="editor-link">Connexion au stockage</button></span></footer>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2>Nouvelle récitation</h2>
+    <div class="field">
+      <label>Numéro de sourate (1–114)</label>
+      <input type="number" id="fNum" min="1" max="114" placeholder="1">
+    </div>
+    <div class="field">
+      <label>Nom de la sourate</label>
+      <input type="text" id="fName" placeholder="Al-Fatiha">
+    </div>
+    <div class="field">
+      <label>Nom en arabe (optionnel)</label>
+      <input type="text" id="fNameAr" placeholder="الفاتحة" dir="rtl">
+    </div>
+    <div class="field">
+      <label>Fichier audio</label>
+      <div class="source-tabs">
+        <button type="button" class="source-tab active" data-src="file">Depuis mon téléphone</button>
+        <button type="button" class="source-tab" data-src="url">Lien externe</button>
+      </div>
+
+      <div id="srcFile">
+        <label class="file-drop" id="fileDrop">
+          <input type="file" id="fFile" accept="audio/*,video/*">
+          <span id="fileDropText">Choisir un fichier audio ou une photo/vidéo contenant l'audio</span>
+        </label>
+        <div class="hint" id="fileHint">Fonctionne pour les extraits courts (jusqu'à environ 3 Mo). Pour aller plus loin, connectez un stockage dans « Connexion au stockage » en bas de page.</div>
+        <div class="upload-progress" id="uploadProgress" style="display:none;">
+          <div class="upload-progress-bar" id="uploadProgressBar"></div>
+        </div>
+        <div class="err" id="fileErr"></div>
+      </div>
+
+      <div id="srcUrl" style="display:none;">
+        <input type="text" id="fUrl" placeholder="https://…">
+        <div class="hint">Pour les sourates longues : hébergez le fichier ailleurs (Google Drive en lien direct, Dropbox, SoundCloud, votre propre serveur…) puis collez le lien ici.</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Note (optionnel)</label>
+      <textarea id="fNote" rows="2" placeholder="Récité au ralenti, tajwid…"></textarea>
+    </div>
+    <div class="err" id="formErr"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelAdd">Annuler</button>
+      <button class="btn primary" id="submitAdd">Publier</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h2>Connexion au stockage</h2>
+    <div class="field">
+      <label>Adresse du Worker Cloudflare</label>
+      <input type="text" id="sWorkerUrl" placeholder="https://recitations-upload.votre-compte.workers.dev">
+      <div class="hint">Collez ici l'adresse de votre Worker Cloudflare (voir les instructions fournies). Une fois connecté, les fichiers volumineux sont envoyés directement vers votre stockage R2, sans limite de 3 Mo. Laissez vide pour revenir au stockage intégré limité.</div>
+    </div>
+    <div class="err" id="settingsErr"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="cancelSettings">Annuler</button>
+      <button class="btn primary" id="saveSettings">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_WORKER_URL = "https://recitation-api.soniadieng22.workers.dev";
+let recitations = [];
+let storageConfig = { workerUrl: DEFAULT_WORKER_URL };
+let sortMode = "surah";
+let isAdmin = false;
+let adminCode = null; // gardé en mémoire le temps de la session, jamais persisté
+let currentAudio = null;
+let currentPlayBtn = null;
+let currentRowEl = null;
+let chosenFile = null;
+let sourceMode = "file";
+
+function apiUrl(path){
+  return `${storageConfig.workerUrl}${path}`;
+}
+
+async function verifyCode(code){
+  const res = await fetch(apiUrl('/verify'), {
+    method: 'POST',
+    headers: { 'X-Admin-Code': code }
+  });
+  if(!res.ok) return false;
+  const data = await res.json();
+  return !!data.ok;
+}
+
+async function loadData(){
+  try{
+    const res = await fetch(apiUrl('/recitations'));
+    recitations = res.ok ? await res.json() : [];
+  }catch(e){
+    recitations = [];
+  }
+  render();
+}
+
+function fmtDate(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR', {day:'2-digit', month:'short', year:'numeric'});
+}
+
+function render(){
+  const list = document.getElementById('list');
+  const empty = document.getElementById('emptyState');
+  const q = document.getElementById('search').value.trim().toLowerCase();
+
+  let items = [...recitations];
+  if(q){
+    items = items.filter(r =>
+      (r.name||'').toLowerCase().includes(q) ||
+      (r.nameAr||'').includes(q) ||
+      String(r.number).includes(q)
+    );
+  }
+  if(sortMode === 'surah'){
+    items.sort((a,b)=> a.number - b.number);
+  }else{
+    items.sort((a,b)=> new Date(b.date) - new Date(a.date));
+  }
+
+  document.getElementById('statCount').textContent = recitations.length;
+  document.getElementById('statLast').textContent = recitations.length
+    ? fmtDate([...recitations].sort((a,b)=>new Date(b.date)-new Date(a.date))[0].date)
+    : '—';
+
+  list.innerHTML = '';
+  if(items.length === 0){
+    empty.style.display = 'block';
+    list.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  list.style.display = 'block';
+
+  items.forEach(r=>{
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <div class="n">${String(r.number).padStart(3,'0')}</div>
+      <div class="names">
+        <div class="fr">${escapeHtml(r.name)}</div>
+        ${r.nameAr ? `<div class="ar">${escapeHtml(r.nameAr)}</div>` : ''}
+        ${r.note ? `<div class="note">${escapeHtml(r.note)}</div>` : ''}
+      </div>
+      <div class="date">${fmtDate(r.date)}</div>
+      <button class="play-btn" aria-label="Écouter">
+        <svg viewBox="0 0 12 12"><polygon points="1,0 12,6 1,12"></polygon></svg>
+      </button>
+      ${isAdmin ? `<button class="del" title="Supprimer">✕</button>` : ''}
+      <div class="progress"></div>
+    `;
+    const playBtn = row.querySelector('.play-btn');
+    const progress = row.querySelector('.progress');
+    const delBtn = row.querySelector('.del');
+
+    playBtn.addEventListener('click', ()=> togglePlay(r, playBtn, row, progress));
+    delBtn && delBtn.addEventListener('click', ()=> handleDelete(r));
+
+    list.appendChild(row);
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+async function togglePlay(r, btn, rowEl, progressEl){
+  if(currentAudio && currentPlayBtn === btn){
+    if(currentAudio.paused){ currentAudio.play(); btn.classList.add('playing'); }
+    else{ currentAudio.pause(); btn.classList.remove('playing'); }
+    return;
+  }
+  if(currentAudio){
+    currentAudio.pause();
+    currentPlayBtn && currentPlayBtn.classList.remove('playing');
+    currentRowEl && (currentRowEl.querySelector('.progress').style.width = '0%');
+  }
+
+  const src = r.audioUrl;
+
+  const audio = new Audio(src);
+  currentAudio = audio;
+  currentPlayBtn = btn;
+  currentRowEl = rowEl;
+  btn.classList.add('playing');
+
+  audio.addEventListener('timeupdate', ()=>{
+    if(audio.duration){
+      progressEl.style.width = (audio.currentTime / audio.duration * 100) + '%';
+    }
+  });
+  audio.addEventListener('ended', ()=>{
+    btn.classList.remove('playing');
+    progressEl.style.width = '0%';
+  });
+  audio.addEventListener('error', ()=>{
+    btn.classList.remove('playing');
+    alert("Impossible de lire ce fichier audio.");
+  });
+  audio.play().catch(()=>{
+    btn.classList.remove('playing');
+    alert("Impossible de lire ce fichier audio.");
+  });
+}
+
+async function handleDelete(r){
+  if(!confirm(`Supprimer « ${r.name} » ?`)) return;
+  try{
+    const res = await fetch(apiUrl(`/recitations/${r.id}`), {
+      method: 'DELETE',
+      headers: { 'X-Admin-Code': adminCode }
+    });
+    if(!res.ok) throw new Error();
+    recitations = recitations.filter(x => x.id !== r.id);
+    render();
+  }catch(e){
+    alert("La suppression a échoué. Le code d'accès a peut-être expiré, réactivez le mode éditeur.");
+  }
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    sortMode = tab.dataset.sort;
+    render();
+  });
+});
+document.getElementById('search').addEventListener('input', render);
+
+document.getElementById('editorToggle').addEventListener('click', async ()=>{
+  if(isAdmin){
+    isAdmin = false;
+    adminCode = null;
+    document.getElementById('editorToggle').classList.remove('on');
+    document.getElementById('editorToggle').textContent = 'Mode éditeur';
+    document.getElementById('openAdd').style.display = 'none';
+    document.getElementById('openAddEmpty').style.display = 'none';
+    document.getElementById('settingsLinkWrap').style.display = 'none';
+    render();
+    return;
+  }
+  const code = prompt("Code d'accès éditeur :");
+  if(code === null) return;
+  const btn = document.getElementById('editorToggle');
+  const original = btn.textContent;
+  btn.textContent = 'Vérification…';
+  let ok = false;
+  try{ ok = await verifyCode(code); }catch(e){ ok = false; }
+  if(!ok){
+    btn.textContent = original;
+    alert("Code incorrect, ou impossible de contacter le Worker.");
+    return;
+  }
+  isAdmin = true;
+  adminCode = code;
+  btn.classList.add('on');
+  btn.textContent = 'Mode éditeur activé';
+  document.getElementById('openAdd').style.display = 'inline-block';
+  document.getElementById('openAddEmpty').style.display = 'inline-block';
+  document.getElementById('settingsLinkWrap').style.display = 'inline';
+  render();
+});
+
+const settingsOverlay = document.getElementById('settingsOverlay');
+document.getElementById('openSettings').addEventListener('click', ()=>{
+  document.getElementById('sWorkerUrl').value = storageConfig.workerUrl || '';
+  document.getElementById('settingsErr').style.display = 'none';
+  settingsOverlay.classList.add('open');
+});
+document.getElementById('cancelSettings').addEventListener('click', ()=> settingsOverlay.classList.remove('open'));
+settingsOverlay.addEventListener('click', (e)=>{ if(e.target === settingsOverlay) settingsOverlay.classList.remove('open'); });
+document.getElementById('saveSettings').addEventListener('click', async ()=>{
+  const val = document.getElementById('sWorkerUrl').value.trim().replace(/\/$/, '');
+  storageConfig.workerUrl = val || DEFAULT_WORKER_URL;
+  updateFileHint();
+  settingsOverlay.classList.remove('open');
+  await loadData();
+});
+
+function updateFileHint(){
+  const hint = document.getElementById('fileHint');
+  hint.textContent = "Les fichiers sont envoyés directement sur votre espace R2, sans limite de 3 Mo.";
+}
+
+const overlay = document.getElementById('overlay');
+function openModal(){
+  overlay.classList.add('open');
+  document.getElementById('formErr').style.display = 'none';
+}
+function resetFileChoice(){
+  chosenFile = null;
+  document.getElementById('fFile').value = '';
+  document.getElementById('fileDropText').textContent = "Choisir un fichier audio ou une photo/vidéo contenant l'audio";
+  document.getElementById('fileDrop').classList.remove('chosen');
+  document.getElementById('fileErr').textContent = '';
+  document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('uploadProgressBar').style.width = '0%';
+}
+function closeModal(){
+  overlay.classList.remove('open');
+  ['fNum','fName','fNameAr','fUrl','fNote'].forEach(id=> document.getElementById(id).value = '');
+  resetFileChoice();
+  setSourceMode('file');
+}
+document.getElementById('openAdd').addEventListener('click', openModal);
+document.getElementById('openAddEmpty').addEventListener('click', openModal);
+document.getElementById('cancelAdd').addEventListener('click', closeModal);
+overlay.addEventListener('click', (e)=>{ if(e.target === overlay) closeModal(); });
+
+function setSourceMode(mode){
+  sourceMode = mode;
+  document.querySelectorAll('.source-tab').forEach(t=> t.classList.toggle('active', t.dataset.src === mode));
+  document.getElementById('srcFile').style.display = mode === 'file' ? 'block' : 'none';
+  document.getElementById('srcUrl').style.display = mode === 'url' ? 'block' : 'none';
+}
+document.querySelectorAll('.source-tab').forEach(t=>{
+  t.addEventListener('click', ()=> setSourceMode(t.dataset.src));
+});
+
+document.getElementById('fFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  const errEl = document.getElementById('fileErr');
+  errEl.textContent = '';
+  if(!file) return;
+
+  chosenFile = file;
+  document.getElementById('fileDropText').textContent = `${file.name} (${(file.size/1024/1024).toFixed(1)} Mo)`;
+  document.getElementById('fileDrop').classList.add('chosen');
+});
+
+function uploadToR2(file, onProgress){
+  return new Promise(async (resolve, reject)=>{
+    let presign;
+    try{
+      const res = await fetch(apiUrl(`/presign?filename=${encodeURIComponent(file.name)}`));
+      if(!res.ok) throw new Error(`Le Worker a répondu ${res.status}.`);
+      presign = await res.json();
+    }catch(e){
+      reject(new Error(`Impossible de contacter le Worker de stockage (${e.message || 'erreur réseau'}). Vérifiez l'adresse et les variables du Worker.`));
+      return;
+    }
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', presign.uploadUrl);
+    xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+    xhr.upload.addEventListener('progress', (e)=>{
+      if(e.lengthComputable) onProgress(e.loaded / e.total * 100);
+    });
+    xhr.onload = ()=>{
+      if(xhr.status >= 200 && xhr.status < 300) resolve(presign.publicUrl);
+      else reject(new Error(`L'envoi vers le stockage a échoué (statut ${xhr.status}). Vérifiez la politique CORS de votre bucket R2.`));
+    };
+    xhr.onerror = ()=> reject(new Error("L'envoi vers le stockage a échoué (probablement un blocage CORS). Vérifiez la politique CORS de votre bucket R2 dans le tableau de bord Cloudflare."));
+    xhr.send(file);
+  });
+}
+
+document.getElementById('submitAdd').addEventListener('click', async ()=>{
+  const errEl = document.getElementById('formErr');
+  const num = parseInt(document.getElementById('fNum').value, 10);
+  const name = document.getElementById('fName').value.trim();
+  const nameAr = document.getElementById('fNameAr').value.trim();
+  const url = document.getElementById('fUrl').value.trim();
+  const note = document.getElementById('fNote').value.trim();
+
+  if(!num || num < 1 || num > 114){ errEl.textContent = "Numéro de sourate invalide (1 à 114)."; errEl.style.display='block'; return; }
+  if(!name){ errEl.textContent = "Le nom de la sourate est requis."; errEl.style.display='block'; return; }
+  if(sourceMode === 'url' && !url){ errEl.textContent = "Le lien audio est requis."; errEl.style.display='block'; return; }
+  if(sourceMode === 'file' && !chosenFile){ errEl.textContent = "Choisissez un fichier audio."; errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+
+  const entry = { number: num, name, nameAr, note };
+
+  const submitBtn = document.getElementById('submitAdd');
+  submitBtn.disabled = true;
+
+  try{
+    if(sourceMode === 'file'){
+      submitBtn.textContent = 'Envoi…';
+      const progressWrap = document.getElementById('uploadProgress');
+      const progressBar = document.getElementById('uploadProgressBar');
+      progressWrap.style.display = 'block';
+      const publicUrl = await uploadToR2(chosenFile, (pct)=>{ progressBar.style.width = pct + '%'; });
+      entry.audioType = 'url';
+      entry.audioUrl = publicUrl;
+    }else{
+      entry.audioType = 'url';
+      entry.audioUrl = url;
+    }
+
+    submitBtn.textContent = 'Publication…';
+    const res = await fetch(apiUrl('/recitations'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Code': adminCode },
+      body: JSON.stringify(entry)
+    });
+    if(!res.ok) throw new Error("L'enregistrement sur le serveur a échoué. Réactivez le mode éditeur et réessayez.");
+    const saved = await res.json();
+    recitations.push(saved);
+    closeModal();
+    render();
+  }catch(e){
+    errEl.textContent = e.message || "Une erreur est survenue pendant l'enregistrement. Réessayez.";
+    errEl.style.display = 'block';
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Publier';
+  }
+});
+
+(async function init(){
+  updateFileHint();
+  await loadData();
+})();
+</script>
+</body>
+</html>
